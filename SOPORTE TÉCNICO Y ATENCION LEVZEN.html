@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Levzen — Soporte Interno</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== CSS VARIABLES ===== */
+  :root {
+    --green: #7FB239;
+    --green-dark: #5f8a26;
+    --green-dim: rgba(127, 178, 57, 0.12);
+    --green-glow: rgba(127, 178, 57, 0.25);
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #181818;
+    --bg4: #202020;
+    --border: rgba(127, 178, 57, 0.18);
+    --border-subtle: rgba(255,255,255,0.06);
+    --text: #f0f0f0;
+    --text-muted: #888;
+    --text-dim: #555;
+    --nav-h: 64px;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  /* ===== RESET ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: calc(var(--nav-h) + 16px);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { text-decoration: none; color: inherit; }
+  ul { list-style: none; }
+  button { cursor: pointer; font-family: inherit; border: none; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 4px; }
+
+  /* ===== UTILITY ===== */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hidden { display: none !important; }
+
+  /* ===== HEADER ===== */
+  #header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 12px 0;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--green);
+  }
+  .header-badge {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--bg3);
+    border: 1px solid var(--border-subtle);
+    padding: 4px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    padding: 28px 16px 20px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .hero-title span { color: var(--green); }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-weight: 400;
+    margin-bottom: 20px;
+  }
+
+  /* ===== SEARCH ===== */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  #search-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 13px 14px 13px 42px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #search-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-glow);
+  }
+  #search-input::placeholder { color: var(--text-dim); }
+  #search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px;
+    display: none;
+  }
+
+  /* ===== SEARCH RESULTS ===== */
+  #search-results {
+    display: none;
+    margin-bottom: 20px;
+  }
+  #search-results.active { display: block; }
+  .search-result-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    animation: fadeIn 0.15s ease;
+  }
+  .sr-info { flex: 1; }
+  .sr-name { font-weight: 600; font-size: 13px; color: var(--text); }
+  .sr-task { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .sr-wa {
+    background: var(--green);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #search-empty {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* ===== AREA PILLS ===== */
+  .area-pills-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 28px;
+    padding-bottom: 4px;
+  }
+  .area-pills-wrap::-webkit-scrollbar { display: none; }
+  .area-pills {
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+    padding-bottom: 2px;
+  }
+  .area-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .area-pill:active, .area-pill.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  #main-content { padding: 0 16px; max-width: 480px; margin: 0 auto; }
+
+  /* ===== AREA SECTIONS ===== */
+  .area-section {
+    margin-bottom: 32px;
+    scroll-margin-top: 72px;
+  }
+  .area-section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .area-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .area-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* ===== COLLABORATOR CARD ===== */
+  .collab-card {
+    background: var(--bg2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .collab-card:active { border-color: var(--border); }
+  .card-top {
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .card-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--green-dim);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--green);
+    letter-spacing: 0.5px;
+  }
+  .card-meta { flex: 1; min-width: 0; }
+  .card-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-role {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+  .card-expand-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .card-expand-btn.open { color: var(--green); }
+  .card-expand-btn svg { transition: transform 0.25s; }
+  .card-expand-btn.open svg { transform: rotate(180deg); }
+
+  .card-body {
+    display: none;
+    padding: 0 16px 16px;
+    animation: slideDown 0.2s ease;
+  }
+  .card-body.open { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin-bottom: 14px;
+  }
+  .tasks-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .task-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .task-chip {
+    background: var(--bg3);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 5px 11px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .wa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--green);
+    color: #000;
+    border-radius: 10px;
+    padding: 13px;
+    font-weight: 600;
+    font-size: 14px;
+    width: 100%;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wa-btn:active { background: var(--green-dark); transform: scale(0.98); }
+  .wa-btn svg { flex-shrink: 0; }
+
+  /* ===== FAQ ===== */
+  #faq { padding: 0 16px 32px; max-width: 480px; margin: 0 auto; scroll-margin-top: 72px; }
+  .faq-item {
+    background: var(--bg2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 16px;
+    cursor: pointer;
+    gap: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .faq-q-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .faq-arrow {
+    color: var(--text-dim);
+    flex-shrink: 0;
+    transition: transform 0.25s, color 0.2s;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--green); }
+  .faq-body {
+    display: none;
+    padding: 0 16px 16px;
+    animation: slideDown 0.2s ease;
+  }
+  .faq-item.open .faq-body { display: block; }
+  .faq-divider { height: 1px; background: var(--border-subtle); margin-bottom: 12px; }
+  .faq-answer {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .faq-responsible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .faq-name-badge {
+    background: var(--green-dim);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+  }
+  .faq-wa {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    transition: background 0.15s;
+  }
+  .faq-wa:active { background: var(--bg4); }
+
+  /* ===== DEFAULT CONTACT ===== */
+  #default-contact {
+    padding: 0 16px 32px;
+    max-width: 480px;
+    margin: 0 auto;
+    scroll-margin-top: 72px;
+  }
+  .default-box {
+    background: linear-gradient(135deg, var(--bg3) 0%, #161a10 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .default-box::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .default-box-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .default-box-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .default-box p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .default-wa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--green);
+    color: #000;
+    border-radius: 10px;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    width: 100%;
+    letter-spacing: 0.2px;
+    transition: background 0.15s;
+  }
+  .default-wa-btn:active { background: var(--green-dark); }
+
+  /* ===== DIRECTORY ===== */
+  #directory {
+    padding: 0 16px 32px;
+    max-width: 480px;
+    margin: 0 auto;
+    scroll-margin-top: 72px;
+  }
+  .dir-list { display: flex; flex-direction: column; gap: 8px; }
+  .dir-item {
+    background: var(--bg2);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .dir-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--green-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+  .dir-info { flex: 1; min-width: 0; }
+  .dir-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .dir-area {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .dir-wa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--green-dim);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    color: var(--green);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .dir-wa:active { background: var(--green); color: #000; }
+
+  /* ===== BOTTOM NAV ===== */
+  #bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-h);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-subtle);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 4px;
+    max-width: 100%;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 10px;
+    transition: background 0.15s;
+    flex: 1;
+  }
+  .nav-item:active { background: var(--bg3); }
+  .nav-item svg {
+    width: 22px;
+    height: 22px;
+    color: var(--text-dim);
+    transition: color 0.2s;
+  }
+  .nav-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 500;
+    transition: color 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .nav-item.active svg { color: var(--green); }
+  .nav-item.active .nav-label { color: var(--green); }
+
+  /* ===== PAGE VIEWS ===== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== SECTION SPACERS ===== */
+  .section-spacer { height: 28px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <!-- Levzen SVG logo icon -->
+      <svg class="logo-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 8L52 20L44 28L40 24L36 28L28 20L40 8Z" fill="#7FB239"/>
+        <path d="M28 20L20 28L28 36L36 28L28 20Z" fill="#7FB239" opacity="0.7"/>
+        <path d="M52 20L60 28L52 36L44 28L52 20Z" fill="#7FB239" opacity="0.7"/>
+        <path d="M36 28L28 36L36 44L40 40L44 40L52 36L44 28L40 32L36 28Z" fill="#7FB239" opacity="0.5"/>
+        <path d="M24 44L16 52H32L40 60L48 52H64L56 44H24Z" fill="#7FB239" opacity="0.4"/>
+      </svg>
+      <span class="logo-text">LEVZEN</span>
+    </div>
+    <span class="header-badge">Soporte Interno</span>
+  </div>
+</header>
+
+<!-- PAGE: INICIO -->
+<div class="page active" id="page-inicio">
+
+  <!-- HERO -->
+  <section id="hero">
+    <h1 class="hero-title">Soporte<br><span>Tecnico</span><br>&amp; Atencion</h1>
+    <p class="hero-sub">Encuentra rapidamente a la persona correcta segun tu duda o necesidad.</p>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="search-input" placeholder="Buscar: factura, pedido, envio..." autocomplete="off" />
+      <button id="search-clear" aria-label="Limpiar busqueda">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    <div id="search-results">
+      <div class="section-label">Resultados</div>
+      <div id="search-list"></div>
+      <div id="search-empty" class="hidden">No se encontraron resultados para tu busqueda.</div>
+    </div>
+
+    <!-- AREA PILLS -->
+    <div id="hero-pills-section">
+      <div class="section-label">Areas de soporte</div>
+      <div class="area-pills-wrap">
+        <div class="area-pills" id="area-pills">
+          <button class="area-pill" onclick="scrollToArea('ventas')">Ventas</button>
+          <button class="area-pill" onclick="scrollToArea('inventario')">Inventario</button>
+          <button class="area-pill" onclick="scrollToArea('envios')">Envios</button>
+          <button class="area-pill" onclick="scrollToArea('compras')">Compras</button>
+          <button class="area-pill" onclick="scrollToArea('marketing')">Marketing</button>
+          <button class="area-pill" onclick="scrollToArea('admin')">Administracion</button>
+          <button class="area-pill" onclick="scrollToArea('almacen')">Almacen</button>
+          <button class="area-pill" onclick="scrollToArea('digital')">Digital</button>
+          <button class="area-pill" onclick="scrollToArea('garantias')">Garantias</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
+
+    <!-- VENTAS Y CLIENTES -->
+    <section class="area-section" id="area-ventas">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Ventas y Clientes
+      </h2>
+      <div id="collab-johan"></div>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section class="area-section" id="area-inventario">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Inventario y Precios
+      </h2>
+      <div id="collab-johan-inv"></div>
+    </section>
+
+    <!-- ENVIOS -->
+    <section class="area-section" id="area-envios">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Envios y Logistica
+      </h2>
+      <div id="collab-jesus"></div>
+      <div id="collab-alejandro-env"></div>
+    </section>
+
+    <!-- COMPRAS -->
+    <section class="area-section" id="area-compras">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Compras
+      </h2>
+      <div id="collab-johan-compras"></div>
+    </section>
+
+    <!-- MARKETING -->
+    <section class="area-section" id="area-marketing">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Marketing
+      </h2>
+      <div id="collab-marianne"></div>
+    </section>
+
+    <!-- ADMINISTRACION -->
+    <section class="area-section" id="area-admin">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Administracion
+      </h2>
+      <div id="collab-mateo"></div>
+      <div id="collab-david"></div>
+    </section>
+
+    <!-- ALMACEN -->
+    <section class="area-section" id="area-almacen">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Almacen
+      </h2>
+      <div id="collab-alejandro"></div>
+    </section>
+
+    <!-- DIGITAL -->
+    <section class="area-section" id="area-digital">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Soporte Digital
+      </h2>
+      <div id="collab-jesus-dig"></div>
+    </section>
+
+    <!-- GARANTIAS -->
+    <section class="area-section" id="area-garantias">
+      <h2 class="area-section-title">
+        <svg class="area-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Garantias
+      </h2>
+      <!-- Banner informativo -->
+      <div style="background:linear-gradient(135deg,#131a0a 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;margin-bottom:6px;">Como reportar una garantia</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:0;">Si un cliente reporta una falla en un producto, contacta directamente a Johan. El gestiona todo el proceso: evaluacion de la falla, seguimiento y resolucion del caso de garantia.</p>
+      </div>
+      <!-- Tipos de falla -->
+      <div style="background:var(--bg2);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:16px;margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;">Tipos de falla que cubre</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span style="background:var(--bg3);border:1px solid var(--border-subtle);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--text-muted);">Producto defectuoso</span>
+          <span style="background:var(--bg3);border:1px solid var(--border-subtle);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--text-muted);">Falla de fabricacion</span>
+          <span style="background:var(--bg3);border:1px solid var(--border-subtle);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--text-muted);">Producto danado al recibir</span>
+          <span style="background:var(--bg3);border:1px solid var(--border-subtle);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--text-muted);">No funciona correctamente</span>
+          <span style="background:var(--bg3);border:1px solid var(--border-subtle);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--text-muted);">Falla prematura del producto</span>
+        </div>
+      </div>
+      <!-- Tarjeta Johan con mensaje especifico de garantia -->
+      <div class="collab-card">
+        <div class="card-top">
+          <div class="card-avatar">JM</div>
+          <div class="card-meta">
+            <div class="card-name">Johan Martinez</div>
+            <div class="card-role">Responsable de Garantias</div>
+          </div>
+        </div>
+        <div style="padding:0 16px 16px;">
+          <div style="height:1px;background:var(--border-subtle);margin-bottom:14px;"></div>
+          <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20necesito%20reportar%20una%20falla%20en%20un%20producto%20para%20gestionar%20una%20garant%C3%ADa.%20%C2%BFMe%20puedes%20apoyar%3F" class="wa-btn" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Reportar garantia a Johan
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEFAULT CONTACT -->
+    <div id="default-contact">
+      <div class="default-box">
+        <div class="default-box-label">No sabes con quien dirigirte</div>
+        <h3 class="default-box-title">Johan te<br>orientara</h3>
+        <p>Si no estas seguro con quien hablar, comunicate primero con Johan y el canalizara tu caso al area correcta.</p>
+        <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20tengo%20una%20duda%20y%20no%20se%20con%20quien%20dirigirme.%20%C2%BFMe%20puedes%20apoyar%3F" class="default-wa-btn" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Contactar a Johan
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /page-inicio -->
+
+
+<!-- PAGE: AREAS -->
+<div class="page" id="page-areas">
+  <div style="padding: 20px 16px 28px; max-width: 480px; margin: 0 auto;">
+    <div class="section-label">Directorio por area</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;margin-bottom:20px;">Areas de Soporte</h2>
+    <div id="areas-page-content"></div>
+  </div>
+</div>
+
+
+<!-- PAGE: FAQ -->
+<div class="page" id="page-faq">
+  <section id="faq" style="padding-top:20px;">
+    <div class="section-label">Guia rapida</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;margin-bottom:20px;">Preguntas<br>Frecuentes</h2>
+
+    <!-- FAQ Items -->
+    <div class="faq-item" id="faq1">
+      <div class="faq-q" onclick="toggleFaq('faq1')">
+        <span class="faq-q-text">Un cliente tiene una queja o problema</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Johan se encarga de la resolucion de casos especiales y atencion a clientes. Si recibes una queja o situacion delicada, comunicate directamente con el.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Johan Martinez</span>
+          <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq2">
+      <div class="faq-q" onclick="toggleFaq('faq2')">
+        <span class="faq-q-text">Necesito una factura</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">David Nieto es el responsable de facturacion. Contactalo directamente con los datos de la empresa o cliente.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">David Nieto</span>
+          <a href="https://wa.me/524425442219?text=Hola%20David%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank" id="faq2-wa">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq3">
+      <div class="faq-q" onclick="toggleFaq('faq3')">
+        <span class="faq-q-text">Hay un problema con un pedido</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Si el problema es con la entrega o el cliente, contacta a Johan. Si el problema es de recepcion o cambio en almacen, contacta a Alejandro.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Johan o Alejandro</span>
+          <a href="https://wa.me/524425442219?text=Hola%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq4">
+      <div class="faq-q" onclick="toggleFaq('faq4')">
+        <span class="faq-q-text">Necesito saber sobre mi pago o nomina</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Mateo elabora la nomina y gestiona el registro de pagos. Cualquier duda sobre pagos, dirigete a el.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Mateo Contreras</span>
+          <a href="https://wa.me/5256441852476?text=Hola%20Mateo%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank" id="faq4-wa">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq5">
+      <div class="faq-q" onclick="toggleFaq('faq5')">
+        <span class="faq-q-text">Necesito enviar o rastrear un pedido</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Jesus Chavez se encarga de la generacion de guias y gestion de envios. Contactalo para rastreos o guias de pedido.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Jesus Chavez</span>
+          <a href="https://wa.me/524421155401?text=Hola%20Jesus%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq6">
+      <div class="faq-q" onclick="toggleFaq('faq6')">
+        <span class="faq-q-text">Tengo una duda sobre inventario o precio</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Johan lleva el orden y control de productos disponibles y agotados. Tambien gestiona la actualizacion de precios generales.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Johan Martinez</span>
+          <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq7">
+      <div class="faq-q" onclick="toggleFaq('faq7')">
+        <span class="faq-q-text">Necesito material o info para apoyar una venta</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Johan tiene mayor nocion de los productos. Marianne puede apoyar con materiales de marketing si se requieren.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Johan o Marianne</span>
+          <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq8">
+      <div class="faq-q" onclick="toggleFaq('faq8')">
+        <span class="faq-q-text">Necesito acceso o apoyo con la plataforma digital</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">David Nieto gestiona los accesos a la pagina y el soporte administrativo digital. Jesus Chavez apoya con guias y envios en plataforma.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">David Nieto</span>
+          <a href="https://wa.me/525613258633?text=Hola%20David%2C%20tengo%20una%20duda%20sobre%20soporte.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq9">
+      <div class="faq-q" onclick="toggleFaq('faq9')">
+        <span class="faq-q-text">Un producto tiene una falla o necesito gestionar una garantia</span>
+        <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-body">
+        <div class="faq-divider"></div>
+        <p class="faq-answer">Johan gestiona todo el proceso de garantias por falla de producto: evaluacion de la falla, seguimiento del caso y resolucion. Contactalo indicando el producto, la falla y los datos del cliente.</p>
+        <div class="faq-responsible">
+          <span class="faq-name-badge">Johan Martinez</span>
+          <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20necesito%20reportar%20una%20falla%20en%20un%20producto%20para%20gestionar%20una%20garant%C3%ADa.%20%C2%BFMe%20puedes%20apoyar%3F" class="faq-wa" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div><!-- /page-faq -->
+
+
+<!-- PAGE: CONTACTOS (DIRECTORY) -->
+<div class="page" id="page-contactos">
+  <section id="directory" style="padding-top:20px;">
+    <div class="section-label">Todos los colaboradores</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;margin-bottom:20px;">Directorio<br>Rapido</h2>
+    <div class="dir-list" id="dir-list"></div>
+  </section>
+</div>
+
+
+<!-- PAGE: AYUDA -->
+<div class="page" id="page-ayuda">
+  <div style="padding: 20px 16px; max-width: 480px; margin: 0 auto;">
+    <div class="section-label">Centro de ayuda</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;margin-bottom:20px;">Ayuda</h2>
+
+    <div style="background:var(--bg2);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:18px;margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:1px;color:var(--green);text-transform:uppercase;margin-bottom:6px;">Como usar esta guia</div>
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.7;">Busca tu duda en el buscador o navega por area. Cada colaborador tiene un boton de WhatsApp para contactarlo directamente con un mensaje preestablecido.</p>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:18px;margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:1px;color:var(--green);text-transform:uppercase;margin-bottom:6px;">Si no sabes con quien hablar</div>
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:14px;">Primero contacta a Johan Martinez. El orientara tu caso y te dirigira con la persona correcta.</p>
+      <a href="https://wa.me/524425442219?text=Hola%20Johan%2C%20tengo%20una%20duda%20y%20no%20se%20con%20quien%20dirigirme.%20%C2%BFMe%20puedes%20apoyar%3F" class="wa-btn" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Contactar a Johan
+      </a>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:18px;margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:1px;color:var(--green);text-transform:uppercase;margin-bottom:6px;">Recordatorio</div>
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.7;">Esta herramienta es de uso interno del equipo comercial de Levzen. La informacion de contacto es confidencial.</p>
+    </div>
+
+    <div style="text-align:center;margin-top:28px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--green);margin-bottom:4px;">LEVZEN</div>
+      <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;">Soporte Interno — Uso exclusivo del equipo</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav" role="navigation" aria-label="Navegacion principal">
+  <button class="nav-item active" id="nav-inicio" onclick="switchPage('inicio')" aria-label="Inicio">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-item" id="nav-areas" onclick="switchPage('areas')" aria-label="Areas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span class="nav-label">Areas</span>
+  </button>
+  <button class="nav-item" id="nav-faq" onclick="switchPage('faq')" aria-label="FAQ">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span class="nav-label">FAQ</span>
+  </button>
+  <button class="nav-item" id="nav-contactos" onclick="switchPage('contactos')" aria-label="Contactos">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span class="nav-label">Contactos</span>
+  </button>
+  <button class="nav-item" id="nav-ayuda" onclick="switchPage('ayuda')" aria-label="Ayuda">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span class="nav-label">Ayuda</span>
+  </button>
+</nav>
+
+
+<script>
+/* ===== DATA ===== */
+const collaborators = [
+  {
+    id: 'jesus',
+    name: 'Jesus Chavez',
+    initials: 'JC',
+    role: 'Logistica y Digital',
+    phone: '524421155401',
+    phoneDisplay: '+52 442 115 5401',
+    areas: ['Envios y Logistica', 'Soporte Digital'],
+    tasks: [
+      'Guias de pedidos',
+      'Envios y zonas extendidas',
+      'Productos nuevos',
+      'Generacion de guias',
+      'Gestion de envios',
+      'Apoyo en logistica'
+    ]
+  },
+  {
+    id: 'johan',
+    name: 'Johan Martinez',
+    initials: 'JM',
+    role: 'Ventas, Inventario y Compras',
+    phone: '524425442219',
+    phoneDisplay: '+52 442 544 2219',
+    areas: ['Ventas y Clientes', 'Inventario y Precios', 'Compras'],
+    tasks: [
+      'Dudas sobre productos',
+      'Atencion a clientes',
+      'Inventario disponible',
+      'Problema con entrega',
+      'Resurtido de mercancia',
+      'Resolucion de casos especiales',
+      'Apoyo general a vendedores',
+      'Control de productos agotados',
+      'Actualizacion de precios',
+      'Garantias por falla de producto',
+      'Reporte de producto defectuoso',
+      'Seguimiento de garantia'
+    ]
+  },
+  {
+    id: 'mateo',
+    name: 'Mateo Contreras',
+    initials: 'MC',
+    role: 'Administracion y Finanzas',
+    phone: '525644185247',
+    phoneDisplay: '+52 56 4418 5247',
+    areas: ['Administracion'],
+    tasks: [
+      'Clientes por pagar',
+      'Nominas a vendedores',
+      'Registro de pagos',
+      'Envio de pedidos y notas',
+      'Revision de cotizaciones'
+    ]
+  },
+  {
+    id: 'marianne',
+    name: 'Marianne Sandoval',
+    initials: 'MS',
+    role: 'Marketing y Promociones',
+    phone: '525585832641',
+    phoneDisplay: '+52 55 8583 2641',
+    areas: ['Marketing'],
+    tasks: [
+      'Incentivos y ventas',
+      'Promociones',
+      'Campanas',
+      'Comunicacion de avisos',
+      'Marketing'
+    ]
+  },
+  {
+    id: 'david',
+    name: 'David Nieto',
+    initials: 'DN',
+    role: 'Facturacion y Accesos',
+    phone: '525613258633',
+    phoneDisplay: '+52 56 1325 8633',
+    areas: ['Administracion', 'Soporte Digital'],
+    tasks: [
+      'Facturacion',
+      'Accesos a la pagina',
+      'Soporte administrativo'
+    ]
+  },
+  {
+    id: 'alejandro',
+    name: 'Alejandro Hernandez',
+    initials: 'AH',
+    role: 'Jefe de Almacen',
+    phone: '524461222565',
+    phoneDisplay: '+52 446 122 2565',
+    areas: ['Almacen', 'Envios y Logistica'],
+    tasks: [
+      'Cambios de mercancia',
+      'Sustituciones',
+      'Citas con clientes',
+      'Recepcion de mercancia',
+      'Seguimiento de pedidos',
+      'Supervision de almacen'
+    ]
+  }
+];
+
+/* Search index */
+const searchIndex = [];
+collaborators.forEach(c => {
+  c.tasks.forEach(t => {
+    searchIndex.push({ name: c.name, task: t, phone: c.phone });
+  });
+});
+
+/* ===== BUILD CARD HTML ===== */
+function buildCard(collab, instanceSuffix) {
+  const cardId = `card-${collab.id}-${instanceSuffix}`;
+  const waMsg = encodeURIComponent('Hola, tengo una duda sobre soporte. \u00BFMe puedes apoyar?');
+  const waUrl = `https://wa.me/${collab.phone}?text=${waMsg}`;
+
+  return `
+    <div class="collab-card">
+      <div class="card-top">
+        <div class="card-avatar">${collab.initials}</div>
+        <div class="card-meta">
+          <div class="card-name">${collab.name}</div>
+          <div class="card-role">${collab.role}</div>
+        </div>
+        <button class="card-expand-btn" onclick="toggleCard('${cardId}')" aria-label="Ver detalle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="card-body" id="${cardId}">
+        <div class="card-divider"></div>
+        <div class="tasks-label">Temas que resuelve</div>
+        <div class="task-list">
+          ${collab.tasks.map(t => `<span class="task-chip">${t}</span>`).join('')}
+        </div>
+        <a href="${waUrl}" class="wa-btn" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Contactar por WhatsApp
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+/* ===== INJECT CARDS ===== */
+function injectCards() {
+  // Ventas y clientes
+  document.getElementById('collab-johan').innerHTML = buildCard(collaborators[1], 'ventas');
+
+  // Inventario
+  document.getElementById('collab-johan-inv').innerHTML = buildCard(collaborators[1], 'inv');
+
+  // Envios
+  document.getElementById('collab-jesus').innerHTML = buildCard(collaborators[0], 'env');
+  document.getElementById('collab-alejandro-env').innerHTML = buildCard(collaborators[5], 'env');
+
+  // Compras
+  document.getElementById('collab-johan-compras').innerHTML = buildCard(collaborators[1], 'compras');
+
+  // Marketing
+  document.getElementById('collab-marianne').innerHTML = buildCard(collaborators[3], 'mkt');
+
+  // Administracion
+  document.getElementById('collab-mateo').innerHTML = buildCard(collaborators[2], 'adm');
+  document.getElementById('collab-david').innerHTML = buildCard(collaborators[4], 'adm');
+
+  // Almacen
+  document.getElementById('collab-alejandro').innerHTML = buildCard(collaborators[5], 'alm');
+
+  // Digital
+  document.getElementById('collab-jesus-dig').innerHTML = buildCard(collaborators[0], 'dig');
+
+  // Fix FAQ David link
+  const faq2wa = document.getElementById('faq2-wa');
+  if(faq2wa) faq2wa.href = `https://wa.me/525613258633?text=${encodeURIComponent('Hola David, tengo una duda sobre soporte. \u00BFMe puedes apoyar?')}`;
+  const faq4wa = document.getElementById('faq4-wa');
+  if(faq4wa) faq4wa.href = `https://wa.me/525644185247?text=${encodeURIComponent('Hola Mateo, tengo una duda sobre soporte. \u00BFMe puedes apoyar?')}`;
+}
+
+/* ===== BUILD AREAS PAGE ===== */
+const areasData = [
+  { id: 'ventas', label: 'Ventas y Clientes', collabs: [1] },
+  { id: 'inventario', label: 'Inventario y Precios', collabs: [1] },
+  { id: 'envios', label: 'Envios y Logistica', collabs: [0, 5] },
+  { id: 'compras', label: 'Compras', collabs: [1] },
+  { id: 'marketing', label: 'Marketing', collabs: [3] },
+  { id: 'admin', label: 'Administracion', collabs: [2, 4] },
+  { id: 'almacen', label: 'Almacen', collabs: [5] },
+  { id: 'digital', label: 'Soporte Digital', collabs: [0, 4] },
+  { id: 'garantias', label: 'Garantias', collabs: [1] }
+];
+
+function buildAreasPage() {
+  const container = document.getElementById('areas-page-content');
+  let html = '';
+  areasData.forEach(area => {
+    html += `<div style="margin-bottom:24px;">`;
+    html += `<div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--text);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border-subtle);">${area.label}</div>`;
+    area.collabs.forEach(idx => {
+      html += buildCard(collaborators[idx], `area-${area.id}-${idx}`);
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+/* ===== DIRECTORY ===== */
+function buildDirectory() {
+  const list = document.getElementById('dir-list');
+  const waMsg = encodeURIComponent('Hola, tengo una duda sobre soporte. \u00BFMe puedes apoyar?');
+  list.innerHTML = collaborators.map(c => `
+    <div class="dir-item">
+      <div class="dir-avatar">${c.initials}</div>
+      <div class="dir-info">
+        <div class="dir-name">${c.name}</div>
+        <div class="dir-area">${c.areas[0]}</div>
+      </div>
+      <a href="https://wa.me/${c.phone}?text=${waMsg}" class="dir-wa" target="_blank" aria-label="WhatsApp ${c.name}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </a>
+    </div>
+  `).join('');
+}
+
+/* ===== TOGGLE CARD ===== */
+function toggleCard(cardId) {
+  const body = document.getElementById(cardId);
+  const btn = body.closest('.collab-card').querySelector('.card-expand-btn');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+/* ===== TOGGLE FAQ ===== */
+function toggleFaq(id) {
+  const item = document.getElementById(id);
+  item.classList.toggle('open');
+}
+
+/* ===== NAVIGATION ===== */
+let currentPage = 'inicio';
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  currentPage = page;
+  window.scrollTo(0, 0);
+}
+
+/* ===== SCROLL TO AREA ===== */
+function scrollToArea(areaId) {
+  switchPage('inicio');
+  setTimeout(() => {
+    const map = {
+      ventas: 'area-ventas',
+      inventario: 'area-inventario',
+      envios: 'area-envios',
+      compras: 'area-compras',
+      marketing: 'area-marketing',
+      admin: 'area-admin',
+      almacen: 'area-almacen',
+      digital: 'area-digital',
+      garantias: 'area-garantias'
+    };
+    const el = document.getElementById(map[areaId]);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }, 50);
+}
+
+/* ===== SEARCH ===== */
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+const searchList = document.getElementById('search-list');
+const searchEmpty = document.getElementById('search-empty');
+const searchClear = document.getElementById('search-clear');
+const heroPillsSection = document.getElementById('hero-pills-section');
+
+searchInput.addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  searchClear.style.display = q ? 'flex' : 'none';
+
+  if (!q) {
+    searchResults.classList.remove('active');
+    heroPillsSection.style.display = '';
+    return;
+  }
+
+  searchResults.classList.add('active');
+  heroPillsSection.style.display = 'none';
+
+  const waMsg = encodeURIComponent('Hola, tengo una duda sobre soporte. \u00BFMe puedes apoyar?');
+
+  // Find unique collaborators that match
+  const matched = new Map();
+  searchIndex.forEach(item => {
+    if (item.task.toLowerCase().includes(q) || item.name.toLowerCase().includes(q)) {
+      if (!matched.has(item.name)) {
+        matched.set(item.name, []);
+      }
+      matched.get(item.name).push(item.task);
+    }
+  });
+
+  if (matched.size === 0) {
+    searchList.innerHTML = '';
+    searchEmpty.classList.remove('hidden');
+    return;
+  }
+
+  searchEmpty.classList.add('hidden');
+  let html = '';
+  matched.forEach((tasks, name) => {
+    const collab = collaborators.find(c => c.name === name);
+    const waUrl = `https://wa.me/${collab.phone}?text=${waMsg}`;
+    html += `
+      <div class="search-result-item">
+        <div class="sr-info">
+          <div class="sr-name">${name}</div>
+          <div class="sr-task">${tasks.slice(0,2).join(', ')}${tasks.length > 2 ? ' +' + (tasks.length-2) + ' mas' : ''}</div>
+        </div>
+        <a href="${waUrl}" class="sr-wa" target="_blank">WhatsApp</a>
+      </div>
+    `;
+  });
+  searchList.innerHTML = html;
+});
+
+searchClear.addEventListener('click', function() {
+  searchInput.value = '';
+  searchClear.style.display = 'none';
+  searchResults.classList.remove('active');
+  heroPillsSection.style.display = '';
+  searchInput.focus();
+});
+
+/* ===== INIT ===== */
+injectCards();
+buildDirectory();
+buildAreasPage();
+</script>
+</body>
+</html>
