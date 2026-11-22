@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
 <meta name="theme-color" content="#000000" />
+<meta name="color-scheme" content="light" />
 <title>LEVZEN · Mayoreo de accesorios para auto, moto y camión</title>
 <meta name="description" content="LEVZEN · Surte tu negocio con accesorios automotrices de alta rotación. Mayoreo para auto, moto y camión. Stock disponible y envíos a todo México." />
 
@@ -17,38 +18,59 @@
        · FACEBOOK_REVIEWS_URL  Link a reseñas / página de Facebook
        · FACEBOOK_URL ........ Página oficial de Facebook
        · INSTAGRAM_URL ....... Perfil oficial de Instagram
+       · CATALOG_COVERS ...... Portadas de los catálogos (levzen.com/existencias/assets)
    ============================================================ -->
 
-<!-- Tipografía: Poppins (Google Fonts, 1 sola petición ligera) -->
+<!-- Tipografía de levzen.com: Archivo (títulos, extranegrita, eje ancho 125 %)
+     + Poppins (texto). Google Fonts, 1 sola petición. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* ====== VARIABLES ====== */
+  /* ====== VARIABLES ======
+     Tomadas de la portada de levzen.com (tienda Prism, marca Levzen):
+     escenario negro arriba, lienzo claro abajo, tarjetas blancas con filo gris,
+     lima #8CB73C solo como relleno (con texto tinta) y #546E24 cuando el verde
+     va como texto sobre blanco. */
   :root{
-    --bg:        #000000;
-    --bg-soft:   #0b0b0b;
-    --surface:   #111111;
-    --surface-2: #161616;
-    --line:      #1f1f1f;
-    --text:      #f4f4f4;
-    --text-dim:  #a8a8a8;
-    --green:     #8cb73c;   /* Verde institucional LEVZEN */
-    --green-2:   #a8d65c;
-    --green-deep:#5a7a1f;
-    --shadow:    0 10px 30px rgba(140,183,60,.18);
-    --shadow-soft: 0 8px 24px rgba(0,0,0,.45);
-    --radius:    18px;
+    --ink:          #000000;   /* escenario negro (héroe y pie) */
+    --carbon:       #141414;   /* texto principal sobre claro (15:1) */
+    --canvas:       #F7F7F7;   /* lienzo de la tienda (surface-muted) */
+    --surface:      #FFFFFF;   /* tarjetas */
+    --line:         #A8A8A8;   /* filo de tarjeta (3:1 sobre blanco) */
+    --line-soft:    #E4E4E4;
+    --text-2:       #555555;   /* texto secundario sobre blanco (7.5:1) */
+    --stone:        #8C8C8C;   /* texto secundario sobre negro */
+    --silver:       #BFBFBF;   /* texto claro terciario sobre negro */
+    --ivory:        #F2F2F2;   /* texto claro principal sobre negro */
+    --lime:         #8CB73C;   /* ACENTO Levzen: relleno, nunca texto sobre claro */
+    --lime-hover:   #7AA233;   /* greige del brandbook: hover del lima */
+    --green-text:   #546E24;   /* el lima en sombra: verde como texto sobre blanco */
+    --green-deep:   #4A6320;   /* kicker sobre claro */
+    --lime-wash:    linear-gradient(180deg, rgba(140,183,60,.30) 0%, rgba(140,183,60,.20) 55%, rgba(140,183,60,.24) 100%);
+    --lime-edge:    rgba(140,183,60,.75);
+    --wa:           #25D366;
+    --focus:        #141414;
+    --shadow-card:  0 14px 32px -20px rgba(0,0,0,.32);
+    --shadow-hover: 0 18px 40px -20px rgba(0,0,0,.42);
+    --shadow-tile:  0 8px 24px -18px rgba(0,0,0,.30);
+    --r-card:       16px;      /* rounded-2xl de las tarjetas de la portada */
+    --r-tile:       12px;      /* rounded-xl de categorías y paneles suaves */
+    --r-btn:        10px;      /* «Agregar» / «Ver N opciones» */
+    --ease:         cubic-bezier(.2,.7,.2,1);
+    --display:      'Archivo', 'Arial Black', system-ui, sans-serif;
+    --body:         'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   }
 
   /* ====== RESET ====== */
   *,*::before,*::after{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
   body{
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--canvas);
+    color: var(--carbon);
+    font-family: var(--body);
     font-weight: 400;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -58,406 +80,550 @@
   }
   button{ font-family: inherit; cursor: pointer; }
   a{ color: inherit; text-decoration: none; }
+  img{ display:block; max-width:100%; }
+  h1,h2,h3,p{ margin:0; }
 
-  /* ====== FONDO ATMOSFÉRICO ====== */
-  body::before{
-    content:"";
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(900px 500px at 50% -10%, rgba(140,183,60,.10), transparent 60%),
-      radial-gradient(600px 400px at 100% 110%, rgba(140,183,60,.05), transparent 60%);
-    pointer-events: none;
-    z-index: 0;
+  /* Voz de título de la tienda: Archivo extranegrita, eje ancho al 125 %,
+     versalitas. Solo títulos, cifras y el teléfono — el resto va en Poppins. */
+  .display{
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
   }
-  body::after{
-    content:"";
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-    background-size: 32px 32px;
-    mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
-    pointer-events: none;
-    z-index: 0;
+
+  /* Foco de teclado visible en todo lo interactivo */
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
   }
 
   /* ====== LAYOUT ====== */
   .wrap{
     position: relative;
     z-index: 1;
-    max-width: 460px;
+    max-width: 480px;
     margin: 0 auto;
-    padding: 28px 20px 56px;
+    padding: 28px 16px 0;
   }
 
-  /* ====== LOGO ====== */
-  .logo-ring{
-    width: 132px;
-    height: 132px;
-    margin: 4px auto 18px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 25%, #1a1a1a 0%, #050505 70%);
-    display: grid;
-    place-items: center;
+  /* ====== HERO (escenario negro, como el héroe y el encabezado de levzen.com) ====== */
+  .hero{
     position: relative;
-    border: 1.5px solid rgba(140,183,60,.35);
-    box-shadow:
-      0 0 0 6px rgba(140,183,60,.06),
-      0 18px 40px rgba(0,0,0,.6),
-      inset 0 1px 0 rgba(255,255,255,.04);
-    animation: floaty 5s ease-in-out infinite;
+    text-align: center;
+    padding-bottom: 4px;
   }
-  .logo-ring::after{
+  /* El negro corre de orilla a orilla aunque la columna mida 480 px, y se
+     funde hacia el lienzo claro detrás de la franja de confianza — igual que
+     el banner de la portada se funde detrás de sus tarjetas. */
+  .hero::before{
     content:"";
     position: absolute;
-    inset:-2px;
+    z-index: -1;
+    top: -200px;
+    bottom: 34px;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background:
+      radial-gradient(560px 300px at 50% 210px, rgba(140,183,60,.16), transparent 70%),
+      linear-gradient(180deg, var(--ink) 0, var(--ink) calc(100% - 150px), #3a3a3a calc(100% - 70px), var(--canvas) 100%);
+    pointer-events: none;
+  }
+
+  .logo-ring{
+    width: 104px;
+    height: 104px;
+    margin: 0 auto 18px;
     border-radius: 50%;
-    background: conic-gradient(from 200deg, transparent, rgba(140,183,60,.45), transparent 60%);
-    filter: blur(6px);
-    opacity:.5;
-    z-index:-1;
-    animation: spin 9s linear infinite;
+    background: var(--ink);
+    display: grid;
+    place-items: center;
+    border: 1.5px solid rgba(140,183,60,.55);
+    box-shadow: 0 0 0 6px rgba(140,183,60,.08), 0 18px 40px rgba(0,0,0,.6);
   }
   .logo-ring img{
-    width: 84%;
-    height: 84%;
+    width: 86%;
+    height: 86%;
     object-fit: cover;
     border-radius: 50%;
   }
-  @keyframes floaty{
-    0%,100%{ transform: translateY(0); }
-    50%   { transform: translateY(-4px); }
-  }
-  @keyframes spin{ to{ transform: rotate(360deg); } }
 
-  /* ====== HEADLINE ====== */
+  /* Kicker «// NUESTRAS LÍNEAS» de la portada */
   .eyebrow{
-    text-align:center;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-size: 11px;
     letter-spacing: .28em;
     text-transform: uppercase;
-    color: var(--green);
+    color: var(--lime);              /* 9.1:1 sobre negro */
     font-weight: 600;
-    margin: 4px 0 10px;
-    opacity:.9;
+    margin: 0 0 14px;
   }
-  .eyebrow .dot{
-    display:inline-block;
-    width:6px; height:6px; border-radius:50%;
-    background: var(--green);
-    box-shadow: 0 0 10px var(--green);
-    margin-right:8px;
-    transform: translateY(-2px);
-  }
+  .eyebrow::before{ content:"//"; content:"//" / ""; letter-spacing: .12em; }
+  .eyebrow .dot{ display: none; }
+
   h1.title{
-    text-align:center;
-    color: var(--green);
-    font-weight: 800;
-    font-size: clamp(22px, 6.2vw, 28px);
-    line-height: 1.18;
-    letter-spacing: -.01em;
-    margin: 0 6px 12px;
+    color: var(--ivory);
+    font-size: clamp(24px, 6.6vw, 34px);
+    line-height: 1.06;
+    margin: 0 0 14px;
     text-wrap: balance;
   }
-  h1.title em{
-    font-style: normal;
-    background: linear-gradient(180deg, var(--green-2), var(--green));
-    -webkit-background-clip: text;
-            background-clip: text;
-    color: transparent;
-  }
+  h1.title em{ font-style: normal; color: var(--lime); }
   .subtitle{
-    text-align:center;
-    color: var(--text-dim);
+    color: var(--silver);
     font-size: 14px;
-    font-weight: 400;
-    margin: 0 8px 26px;
+    margin: 0 6px 22px;
     line-height: 1.55;
   }
-  .subtitle b{ color: var(--text); font-weight: 600; }
+  .subtitle b{ color: var(--ivory); font-weight: 600; }
+
+  /* ====== FRANJA DE CONFIANZA (tarjetas «Envío gratis / Mayoreo» de la portada) ====== */
+  .trust{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .trust li{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 6px 13px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-card);
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--carbon);
+    text-align: center;
+  }
+  .trust svg{
+    width: 40px; height: 40px;
+    padding: 10px;
+    border-radius: 50%;
+    background: var(--canvas);
+    color: var(--green-text);
+  }
+
+  /* ====== ENCABEZADOS DE SECCIÓN (titulo-3 de la portada) ====== */
+  .sec-head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    margin: 34px 2px 14px;
+  }
+  .sec-head h2{
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    text-transform: uppercase;
+    font-size: clamp(17px, 4.7vw, 21px);
+    line-height: 1.15;
+    color: var(--carbon);
+  }
+  .sec-head span{
+    font-size: 12.5px;
+    white-space: nowrap;
+    color: var(--green-text);
+    font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .sec-head span::before{
+    content:""; width:7px; height:7px; border-radius:50%; background: var(--lime);
+  }
 
   /* ====== BOTONES PRINCIPALES ====== */
-  .stack{ display: flex; flex-direction: column; gap: 12px; }
+  #mainButtons{ padding-top: 22px; }
+  .stack{ display: flex; flex-direction: column; gap: 10px; }
 
+  /* Tarjeta-botón: misma receta que las tarjetas de acceso de la portada
+     (blanco, filo #A8A8A8, radio 16, sombra baja que se abre al pasar). */
   .btn{
     appearance:none;
     -webkit-appearance:none;
     width: 100%;
+    min-height: 72px;
     border: 1px solid var(--line);
     background: var(--surface);
-    color: var(--text);
-    border-radius: var(--radius);
-    padding: 18px 18px;
-    font-size: 16px;
-    font-weight: 600;
+    color: var(--carbon);
+    border-radius: var(--r-card);
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.25;
     text-align: left;
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: var(--shadow-soft);
-    transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    box-shadow: var(--shadow-card);
+    transition: transform .2s var(--ease), box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
     position: relative;
     overflow: hidden;
   }
+  .btn:hover{ transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .btn:active{ transform: scale(.985); }
-  .btn:hover{ background: var(--surface-2); border-color:#2a2a2a; }
   .btn .ico{
     flex: 0 0 44px;
     width: 44px; height: 44px;
-    border-radius: 12px;
+    border-radius: 50%;
     display: grid; place-items:center;
-    background: rgba(140,183,60,.10);
-    color: var(--green);
+    background: var(--canvas);
+    color: var(--green-text);
   }
   .btn .ico svg{ width:22px; height:22px; }
-  .btn .label{ display:flex; flex-direction: column; line-height:1.2; }
+  .btn .label{ display:flex; flex-direction: column; line-height:1.25; min-width: 0; }
   .btn .label small{
-    color: var(--text-dim);
+    color: var(--text-2);
     font-weight: 400;
-    font-size: 12px;
-    margin-top: 2px;
+    font-size: 12.5px;
+    margin-top: 3px;
   }
   .btn .chev{
     margin-left:auto;
-    color: var(--text-dim);
-    transition: transform .2s ease, color .2s ease;
+    flex-shrink: 0;
+    color: var(--stone);
+    transition: transform .2s var(--ease), color .2s ease;
   }
-  .btn:hover .chev{ color: var(--green); transform: translateX(2px); }
+  .btn:hover .chev{ color: var(--green-text); transform: translateX(3px); }
 
-  /* Variante PRIMARIA (verde) */
+  /* Variante PRIMARIA: el lima de «Agregar» / «Ver mi precio de mayorista»,
+     con texto tinta y el destello que cruza el botón al pasar (btn-primary). */
   .btn.primary{
-    background: linear-gradient(180deg, var(--green-2) 0%, var(--green) 100%);
-    color: #0a0a0a;
-    border-color: transparent;
-    box-shadow: var(--shadow), 0 2px 0 rgba(0,0,0,.2) inset;
+    min-height: 78px;
+    background: var(--lime);
+    color: var(--carbon);
+    border-color: var(--lime);
+    box-shadow: 0 14px 32px -18px rgba(84,110,36,.55);
   }
-  .btn.primary .ico{
-    background: rgba(0,0,0,.12);
-    color: #0a0a0a;
+  .btn.primary::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(105deg, transparent 42%, rgba(255,255,255,.45) 50%, transparent 58%);
+    transform: translateX(-130%);
+    pointer-events:none;
   }
-  .btn.primary .label small{ color: rgba(0,0,0,.6); }
-  .btn.primary .chev{ color:#0a0a0a; }
-  .btn.primary:hover{
-    filter: brightness(1.04);
-    background: linear-gradient(180deg, var(--green-2), var(--green));
-  }
+  .btn.primary:hover{ background: var(--lime-hover); border-color: var(--lime-hover); }
+  .btn.primary:hover::after{ transform: translateX(130%); transition: transform .65s ease; }
+  .btn.primary .ico{ background: rgba(255,255,255,.55); color: var(--carbon); }
+  .btn.primary .label{ font-size: 16px; }
+  .btn.primary .label small{ color: #1f2a0c; font-weight: 500; }
+  .btn.primary .chev{ color: var(--carbon); }
+  .btn.primary:hover .chev{ color: var(--carbon); }
 
-  /* Variante WhatsApp */
-  .btn.whats .ico{
-    background: rgba(37,211,102,.12);
-    color:#25D366;
+  /* Variante WhatsApp: misma tarjeta; el ícono lleva el verde de WhatsApp en sombra */
+  .btn.whats .ico{ color: #128C4A; }
+
+  /* ====== PORTADAS DE CATÁLOGO (inicio) ====== */
+  /* CATALOG_COVERS: portadas públicas de levzen.com/existencias */
+  .covers{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
   }
+  .covers li{ display: flex; min-width: 0; }
+  .cover{
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--r-tile);
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-tile);
+    transition: transform .25s var(--ease), box-shadow .25s ease;
+  }
+  .cover .art{
+    position: relative;
+    aspect-ratio: 360 / 467;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .cover img{
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .5s var(--ease);
+  }
+  .cover .cap{
+    display:flex; align-items:center; justify-content: space-between;
+    gap: 4px;
+    padding: 10px 10px 11px;
+    font-size: 13.5px;
+    font-weight: 700;
+    min-height: 44px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .cover .cap svg{ width:16px; height:16px; color: var(--green-text); flex-shrink:0; transition: transform .2s var(--ease); }
+  .cover:hover{ transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .cover:hover img{ transform: scale(1.04); }
+  .cover:hover .cap svg{ transform: translate(2px,-2px); }
+  .cover:active{ transform: scale(.98); }
+
+  /* Botón secundario: el «Ver N opciones» de la portada (blanco, filo lima, radio 10) */
+  .link-more{
+    margin-top: 12px;
+    width: 100%;
+    min-height: 52px;
+    background: var(--surface);
+    border: 2px solid var(--lime);
+    color: var(--carbon);
+    border-radius: var(--r-btn);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    display: flex; align-items: center; gap: 12px;
+    transition: background-color .2s, transform .15s;
+  }
+  .link-more .lm-text{ display:flex; flex-direction: column; line-height: 1.25; }
+  .link-more small{ color: var(--text-2); font-size: 12px; font-weight: 400; margin-top: 2px; }
+  .link-more svg{ width:18px; height:18px; color: var(--green-text); flex-shrink: 0; }
+  .link-more .chev{ margin-left: auto; color: var(--green-text); display:flex; }
+  .link-more:hover{ background: rgba(140,183,60,.12); }
+  .link-more:active{ transform: scale(.985); }
 
   /* ====== SECCIÓN COLAPSABLE ====== */
   .panel{
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 22px;
-    padding: 22px 18px 18px;
-    margin-top: 4px;
-    box-shadow: var(--shadow-soft);
-    animation: slide-in .35s cubic-bezier(.2,.7,.2,1) both;
+    border-radius: var(--r-card);
+    padding: 22px 16px 16px;
+    margin-top: 22px;
+    box-shadow: var(--shadow-card);
+    animation: slide-in .4s var(--ease) both;
   }
   @keyframes slide-in{
-    from{ opacity: 0; transform: translateY(8px); }
+    from{ opacity: 0; transform: translateY(10px); }
     to  { opacity: 1; transform: translateY(0); }
   }
   .panel h2{
-    margin: 0 0 4px;
-    color: var(--green);
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -.005em;
+    margin: 0 0 8px;
+    color: var(--carbon);
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    text-transform: uppercase;
+    font-size: clamp(20px, 5.6vw, 26px);
+    line-height: 1.1;
+    outline: none;
+  }
+  .panel h2::before{
+    content:"";
+    display:block;
+    width: 32px; height: 4px; border-radius: 4px;
+    background: var(--lime);
+    margin-bottom: 12px;
   }
   .panel .lede{
-    color: var(--text-dim);
-    font-size: 13.5px;
-    margin: 0 0 14px;
+    color: var(--text-2);
+    font-size: 14px;
+    margin: 0 0 16px;
   }
 
-  .features{ list-style: none; padding: 0; margin: 12px 0 18px; display: grid; gap: 10px; }
+  .features{ list-style: none; padding: 0; margin: 12px 0 18px; display: grid; gap: 8px; }
   .features li{
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: 14px;
+    background: var(--canvas);
+    border-radius: var(--r-tile);
     padding: 12px 14px;
     font-size: 14px;
     line-height: 1.45;
   }
   .features li .check{
     flex: 0 0 26px; width: 26px; height: 26px;
-    border-radius: 8px;
-    background: rgba(140,183,60,.12);
-    color: var(--green);
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--carbon);
     display: grid; place-items: center;
     margin-top: 1px;
   }
   .features li .check svg{ width:14px; height:14px; }
-  .features li b{ color: var(--text); font-weight: 600; }
-  .features li span{ color: var(--text-dim); }
+  .features li b{ color: var(--carbon); font-weight: 700; }
+  .features li span{ color: var(--text-2); }
 
+  /* Cifras: caja lavada en lima como «Explora por línea»; número en la voz de precio */
   .stat-row{
     display:grid; grid-template-columns: repeat(2,1fr); gap:10px;
     margin: 4px 0 16px;
   }
   .stat{
-    background: linear-gradient(180deg, rgba(140,183,60,.10), rgba(140,183,60,.02));
-    border: 1px solid rgba(140,183,60,.22);
-    border-radius: 14px;
-    padding: 12px 14px;
+    background: var(--surface) var(--lime-wash);
+    border: 1px solid var(--lime-edge);
+    border-radius: var(--r-tile);
+    padding: 14px;
   }
   .stat .num{
-    font-size: 20px; font-weight: 800; color: var(--green); line-height:1;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    font-variant-numeric: tabular-nums;
+    font-size: 24px; color: var(--carbon); line-height:1;
   }
   .stat .lbl{
-    font-size: 11.5px; color: var(--text-dim);
+    font-size: 12px; color: #2f3a1a;
     margin-top: 6px; line-height:1.3;
   }
 
+  /* Regresar: btn-ghost de la tienda en claro (píldora, versalitas) */
   .back{
     margin-top: 14px;
     width: 100%;
-    background: transparent;
+    min-height: 48px;
+    background: var(--surface);
     border: 1px solid var(--line);
-    color: var(--text);
-    border-radius: 14px;
-    padding: 13px;
-    font-size: 14px;
-    font-weight: 500;
+    color: var(--carbon);
+    border-radius: 999px;
+    padding: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .15em;
+    text-transform: uppercase;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    transition: background .18s, border-color .18s;
+    transition: border-color .2s, color .2s, transform .15s;
   }
-  .back:hover{ background: var(--surface-2); border-color:#2a2a2a; }
+  .back:hover{ border-color: var(--green-text); color: var(--green-text); }
+  .back:active{ transform: scale(.97); }
   .back svg{ width:16px; height:16px; }
 
   /* ====== REFERENCIAS ====== */
   .ref-grid{ display: grid; gap: 10px; margin-top: 14px; }
   .ref-btn{
-    appearance:none; border: 1px solid var(--line);
-    background: var(--surface-2);
-    color: var(--text);
-    border-radius: 14px;
-    padding: 14px 16px;
+    appearance:none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--carbon);
+    border-radius: var(--r-tile);
+    min-height: 60px;
+    padding: 12px 14px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     display: flex; align-items: center; gap: 12px;
-    transition: transform .18s, background .18s, border-color .18s;
+    box-shadow: var(--shadow-tile);
+    transition: transform .2s var(--ease), box-shadow .2s;
   }
   .ref-btn:active{ transform: scale(.985); }
   .ref-btn .brand{
     width: 36px; height: 36px;
-    border-radius: 10px;
+    border-radius: 50%;
     display: grid; place-items: center;
     flex-shrink: 0;
   }
-  .ref-btn.google .brand{ background: #fff; }
+  .ref-btn.google .brand{ background: var(--surface); border: 1px solid var(--line-soft); }
   .ref-btn.facebook .brand{ background: #1877F2; color:#fff; }
-  .ref-btn .arrow{ margin-left:auto; color: var(--text-dim); }
-  .ref-btn:hover{ border-color:#2a2a2a; background: #1a1a1a; }
+  .ref-btn .arrow{ margin-left:auto; color: var(--stone); transition: color .2s, transform .2s var(--ease); }
+  .ref-btn:hover{ transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .ref-btn:hover .arrow{ color: var(--green-text); transform: translate(2px,-2px); }
 
-  /* ====== SOCIAL ROW ====== */
-  .social-section{
-    margin-top: 30px;
-    text-align: center;
-  }
-  .social-section .label{
-    font-size: 11px;
-    letter-spacing: .25em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 14px;
-    font-weight: 600;
-  }
-  .social{
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-  }
-  .social a{
-    width: 54px; height: 54px;
-    border-radius: 14px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    display: grid; place-items: center;
-    color: var(--text);
-    transition: transform .18s, background .18s, border-color .18s, color .18s;
-    box-shadow: var(--shadow-soft);
-  }
-  .social a:hover{
-    transform: translateY(-2px);
-    border-color: rgba(140,183,60,.5);
-    color: var(--green);
-  }
-  .social a.wa:hover{ color:#25D366; border-color: rgba(37,211,102,.5); }
-  .social a svg{ width: 24px; height: 24px; }
-
-  /* ====== CATÁLOGOS (sub-botones por categoría) ====== */
-  .cat-grid{ display: grid; gap: 10px; margin-top: 14px; }
+  /* ====== CATÁLOGOS (panel: tarjetas grandes con portada) ====== */
+  .cat-grid{ display: grid; gap: 12px; margin-top: 14px; }
   .cat-btn{
-    appearance: none;
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    padding: 10px;
+    border-radius: var(--r-card);
     border: 1px solid var(--line);
-    background: var(--surface-2);
-    color: var(--text);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 15px;
-    font-weight: 600;
-    display: flex; align-items: center; gap: 12px;
+    background: var(--surface);
+    color: var(--carbon);
     text-decoration: none;
-    transition: transform .18s, background .18s, border-color .18s;
+    box-shadow: var(--shadow-tile);
+    transition: transform .22s var(--ease), box-shadow .2s;
   }
+  .cat-btn .thumb{
+    flex: 0 0 92px;
+    width: 92px;
+    aspect-ratio: 360 / 467;
+    border-radius: var(--r-tile);
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .cat-btn .thumb img{ width:100%; height:100%; object-fit: cover; transition: transform .5s var(--ease); }
+  .cat-btn .body{
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+    padding: 4px 2px;
+  }
+  .cat-btn .kicker{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--green-text); font-weight: 700;
+  }
+  .cat-btn .kicker svg{ width: 16px; height: 16px; }
+  .cat-btn .name{
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    text-transform: uppercase;
+    font-size: 15px;
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+  .cat-btn .desc{ font-size: 12.5px; color: var(--text-2); line-height: 1.35; }
+  .cat-btn .go{
+    margin-top: 6px;
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--carbon);
+    background: var(--lime);
+    padding: 7px 14px;
+    border-radius: 999px;
+  }
+  .cat-btn .go svg{ width: 14px; height: 14px; transition: transform .2s var(--ease); }
+  .cat-btn:hover{ transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .cat-btn:hover .thumb img{ transform: scale(1.05); }
+  .cat-btn:hover .go{ background: var(--lime-hover); }
+  .cat-btn:hover .go svg{ transform: translate(2px,-2px); }
   .cat-btn:active{ transform: scale(.985); }
-  .cat-btn:hover{ border-color: rgba(140,183,60,.4); background: #1a1a1a; }
-  .cat-btn .brand{
-    width: 38px; height: 38px;
-    border-radius: 11px;
-    display: grid; place-items: center;
-    background: rgba(140,183,60,.12);
-    color: var(--green);
-    flex-shrink: 0;
-  }
-  .cat-btn .brand svg{ width: 22px; height: 22px; }
-  .cat-btn .arrow{ margin-left: auto; color: var(--text-dim); }
-  .cat-btn:hover .arrow{ color: var(--green); }
 
   /* ====== INFO CARDS (Soporte 24/7 + Almacén) ====== */
-  .info-stack{
-    display: grid;
-    gap: 10px;
-    margin-top: 22px;
-  }
+  .info-stack{ display: grid; gap: 10px; }
   .info-card{
     display: flex;
     align-items: center;
     gap: 14px;
+    min-height: 68px;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 14px 16px;
+    border-radius: var(--r-card);
+    padding: 12px 16px;
     text-decoration: none;
     color: inherit;
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-card);
   }
-  .info-card.linkable{
-    transition: transform .18s ease, background .18s ease, border-color .18s ease;
-  }
-  .info-card.linkable:hover{
-    background: var(--surface-2);
-    border-color: rgba(140,183,60,.4);
-  }
+  .info-card.linkable{ transition: transform .2s var(--ease), box-shadow .2s ease; }
+  .info-card.linkable:hover{ transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .info-card.linkable:active{ transform: scale(.985); }
   .info-ico{
-    flex: 0 0 40px;
-    width: 40px; height: 40px;
-    border-radius: 11px;
-    background: rgba(140,183,60,.12);
-    color: var(--green);
+    flex: 0 0 44px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--canvas);
+    color: var(--green-text);
     display: grid;
     place-items: center;
   }
@@ -469,124 +635,284 @@
     flex-direction: column;
     line-height: 1.3;
   }
+  /* rótulo de la tienda: 11px, 700, .18em */
   .info-eyebrow{
-    font-size: 10.5px;
-    letter-spacing: .22em;
+    font-size: 11px;
+    letter-spacing: .18em;
     text-transform: uppercase;
-    color: var(--text-dim);
-    font-weight: 600;
+    color: var(--green-text);
+    font-weight: 700;
     margin-bottom: 4px;
   }
   .info-value{
-    font-size: 16px;
+    font-size: 15.5px;
     font-weight: 700;
-    color: var(--text);
+    color: var(--carbon);
     text-decoration: none;
-    letter-spacing: .005em;
   }
-  a.info-value{ color: var(--green); }
-  a.info-value:hover{ filter: brightness(1.1); }
+  /* El teléfono habla en la voz del precio (Archivo 800 al 125 %) */
+  a.info-value{
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    font-variant-numeric: tabular-nums;
+    color: var(--carbon);
+    display: inline-flex; align-items: center;
+    min-height: 32px;
+    align-self: flex-start;
+    font-size: 20px;
+    letter-spacing: .01em;
+  }
+  a.info-value:hover{ color: var(--green-text); text-decoration: underline; text-underline-offset: 4px; }
+  /* El teléfono hace clicable toda la tarjeta (objetivo táctil ≥44 px) */
+  .info-card.call{ position: relative; transition: transform .2s var(--ease), box-shadow .2s ease; }
+  .info-card.call a.info-value::after{ content:""; position:absolute; inset:0; border-radius: var(--r-card); }
+  .info-card.call:hover{ transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .info-card.call:focus-within{ outline: 2px solid var(--focus); outline-offset: 3px; }
+  .info-card.call a.info-value:focus-visible{ outline: none; }
   .info-meta{
-    font-size: 11.5px;
-    color: var(--text-dim);
+    font-size: 12px;
+    color: var(--text-2);
     margin-top: 3px;
   }
   .info-arrow{
-    color: var(--text-dim);
+    color: var(--stone);
     margin-left: auto;
     flex-shrink: 0;
-    transition: color .18s, transform .18s;
+    transition: color .2s, transform .2s var(--ease);
   }
-  .info-card.linkable:hover .info-arrow{
-    color: var(--green);
-    transform: translate(2px,-2px);
+  .info-card.linkable:hover .info-arrow{ color: var(--green-text); transform: translate(2px,-2px); }
+  .badge-live{
+    display:inline-flex; align-items:center;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-live::before{
+    content:""; width:7px; height:7px; border-radius:50%; background: var(--lime);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%  { box-shadow: 0 0 0 0 rgba(140,183,60,.6); }
+    70% { box-shadow: 0 0 0 7px rgba(140,183,60,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(140,183,60,0); }
   }
 
-  /* ====== TAGLINE / FOOTER ====== */
+  /* ====== TAGLINE (caja lavada en lima, como «Explora por línea») ====== */
   .tagline{
-    margin-top: 32px;
+    margin-top: 34px;
     text-align: center;
-    color: var(--text-dim);
-    font-size: 13px;
-    font-style: italic;
-    padding: 0 12px;
-    line-height: 1.55;
+    color: #2f3a1a;
+    font-size: 13.5px;
+    padding: 22px 18px;
+    line-height: 1.6;
+    border-radius: var(--r-card);
+    border: 1px solid var(--lime-edge);
+    background: var(--surface) var(--lime-wash);
+    box-shadow: 0 18px 50px -30px rgba(0,0,0,.35);
   }
   .tagline span{
-    background: linear-gradient(90deg, var(--green-2), var(--green));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-style: normal;
-    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 1.2;
+    color: var(--carbon);
+    text-wrap: balance;
   }
 
-  footer{
-    margin-top: 28px;
+  /* ====== SOCIAL ROW ====== */
+  .social-section{
+    margin-top: 34px;
     text-align: center;
-    color: #5a5a5a;
+  }
+  .social-section .label{
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .social{
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  .social a{
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+    color: var(--carbon);
+    box-shadow: var(--shadow-tile);
+    transition: transform .2s var(--ease), border-color .2s, color .2s;
+  }
+  .social a:hover{
+    transform: translateY(-3px);
+    border-color: var(--lime);
+    color: var(--green-text);
+  }
+  .social a.wa:hover{ color: #128C4A; border-color: var(--wa); }
+  .social a svg{ width: 24px; height: 24px; }
+
+  /* ====== PIE (negro, como el pie de levzen.com) ====== */
+  footer{
+    position: relative;
+    margin-top: 36px;
+    text-align: center;
+    color: var(--stone);              /* 5.9:1 sobre negro */
     font-size: 11px;
     letter-spacing: .1em;
     text-transform: uppercase;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
+    padding: 26px 0 calc(104px + env(safe-area-inset-bottom));
+    line-height: 1.8;
   }
-  footer b{ color: var(--green); font-weight: 700; letter-spacing:.18em; }
+  footer::before{
+    content:"";
+    position: absolute;
+    z-index: -1;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: var(--ink);
+    border-top: 3px solid var(--lime);
+  }
+  footer b{
+    color: var(--lime);
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-synthesis: none;
+    letter-spacing: .12em;
+  }
+
+  /* ====== BOTÓN FLOTANTE WHATSAPP ====== */
+  .fab-wa{
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 20;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    padding: 0 20px 0 16px;
+    border-radius: 999px;
+    background: var(--wa);
+    color: #062b14;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    box-shadow: 0 14px 32px -14px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.9);
+    transition: transform .2s var(--ease), box-shadow .2s;
+    animation: fab-in .5s var(--ease) .9s both;
+  }
+  .fab-wa svg{ width: 24px; height: 24px; }
+  .fab-wa:hover{ transform: translateY(-2px); }
+  .fab-wa:active{ transform: scale(.96); }
+  @keyframes fab-in{
+    from{ opacity:0; transform: translateY(16px) scale(.9); }
+    to  { opacity:1; transform: none; }
+  }
 
   /* ====== ENTRADA INICIAL ====== */
-  .reveal{ opacity: 0; transform: translateY(10px); animation: reveal .55s ease forwards; }
+  .reveal{ opacity: 0; transform: translateY(10px); animation: reveal .6s var(--ease) forwards; }
   .reveal.d1{ animation-delay: .05s; }
-  .reveal.d2{ animation-delay: .15s; }
-  .reveal.d3{ animation-delay: .25s; }
-  .reveal.d4{ animation-delay: .35s; }
-  .reveal.d5{ animation-delay: .45s; }
-  .reveal.d6{ animation-delay: .55s; }
+  .reveal.d2{ animation-delay: .12s; }
+  .reveal.d3{ animation-delay: .2s; }
+  .reveal.d4{ animation-delay: .28s; }
+  .reveal.d5{ animation-delay: .36s; }
+  .reveal.d6{ animation-delay: .44s; }
   @keyframes reveal{ to{ opacity:1; transform: translateY(0); } }
 
   /* Oculto */
   .hidden{ display: none !important; }
 
-  /* Tablet/Desktop refinements */
-  @media (min-width: 480px){
-    .wrap{ padding: 40px 24px 64px; }
-    .logo-ring{ width: 144px; height: 144px; }
-    h1.title{ font-size: 30px; }
+  /* Pantallas muy angostas */
+  @media (max-width: 350px){
+    .trust li{ font-size: 11px; }
+    .cover .cap{ font-size: 12.5px; padding: 9px 8px; }
+    .fab-wa .txt{ display:none; }
+    .fab-wa{ width:56px; padding:0; justify-content:center; }
+  }
+
+  /* Tablet/Desktop */
+  @media (min-width: 520px){
+    .wrap{ max-width: 520px; padding: 48px 24px 0; }
+    .logo-ring{ width: 120px; height: 120px; }
     .subtitle{ font-size: 15px; }
-    .btn{ font-size: 17px; padding: 20px; }
+    .btn{ font-size: 16px; padding: 16px 18px; }
+    .trust li{ font-size: 13.5px; padding: 16px 8px; }
+    .cat-btn .thumb{ flex-basis: 108px; width: 108px; }
+    .cat-btn .name{ font-size: 17px; }
+    .panel{ padding: 26px 22px 20px; }
+  }
+  @media (min-width: 1024px){
+    .fab-wa{ right: 32px; bottom: 32px; }
   }
 
   /* Reducir movimiento si el usuario lo prefiere */
   @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
     *,*::before,*::after{ animation: none !important; transition: none !important; }
+    .reveal{ opacity: 1 !important; transform: none !important; }
+    .btn.primary::after{ display: none; }
   }
 </style>
 </head>
 <body>
 
-<main class="wrap">
+<main class="wrap" id="contenido">
 
-  <!-- ============= LOGO ============= -->
-  <!-- LOGO_SRC: reemplaza el "src" si quieres cambiar el logo -->
-  <div class="logo-ring reveal d1" aria-label="LEVZEN logo">
-    <img src="data:image/jpeg;base64,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" alt="LEVZEN" />
-  </div>
+  <!-- ============= HERO ============= -->
+  <header class="hero">
+    <!-- ============= LOGO ============= -->
+    <!-- LOGO_SRC: reemplaza el "src" si quieres cambiar el logo -->
+    <div class="logo-ring reveal d1">
+      <img src="data:image/jpeg;base64,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" alt="LEVZEN" width="108" height="108" />
+    </div>
 
-  <!-- ============= HEADLINE ============= -->
-  <p class="eyebrow reveal d2"><span class="dot"></span>Mayoreo automotriz · México</p>
+    <!-- ============= HEADLINE ============= -->
+    <p class="eyebrow reveal d2"><span class="dot" aria-hidden="true"></span>Mayoreo automotriz · México</p>
 
-  <h1 class="title reveal d2">
-    Surte tu negocio con <em>accesorios automotrices</em> de alta rotación
-  </h1>
+    <h1 class="title display reveal d2">
+      Surte tu negocio con <em>accesorios automotrices</em> de alta rotación
+    </h1>
 
-  <p class="subtitle reveal d3">
-    <b>Auto, moto y camión</b> al mayoreo · Stock disponible · Envíos a todo México
-  </p>
+    <p class="subtitle reveal d3">
+      <b>Auto, moto y camión</b> al mayoreo · Stock disponible · Envíos a todo México
+    </p>
+
+    <!-- Franja de confianza -->
+    <ul class="trust reveal d3" aria-label="Por qué comprar en LEVZEN">
+      <li>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 00-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        Envíos a todo México
+      </li>
+      <li>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+        Stock disponible
+      </li>
+      <li>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor"/></svg>
+        Precios de mayoreo
+      </li>
+    </ul>
+  </header>
 
   <!-- ============= BOTONES PRINCIPALES ============= -->
-  <section id="mainButtons" class="stack reveal d4">
+  <section id="mainButtons" class="reveal d4" aria-label="Opciones principales">
 
     <!-- BOTÓN 1 -->
-    <button class="btn primary" onclick="openSection('mayoreo')" aria-expanded="false" aria-controls="mayoreo">
+    <button class="btn primary" onclick="openSection('mayoreo', this)" aria-expanded="false" aria-controls="mayoreo">
       <span class="ico" aria-hidden="true">
         <!-- icon: store -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -605,92 +931,113 @@
       </span>
     </button>
 
+    <!-- ============= CATÁLOGOS (protagonistas) ============= -->
+    <div class="sec-head">
+      <h2 id="cat-home-title">Catálogos de mayoreo</h2>
+      <span>Existencias al momento</span>
+    </div>
+
+    <!-- CATALOG_COVERS: cada portada abre el catálogo de su categoría -->
+    <ul class="covers" aria-labelledby="cat-home-title">
+      <li><a class="cover" href="https://levzen.com/existencias/auto" target="_blank" rel="noopener" aria-label="Catálogo de Auto (se abre en otra pestaña)">
+        <span class="art"><img src="https://levzen.com/existencias/assets/portada-auto-mini.jpg" alt="" width="360" height="467" loading="eager" decoding="async" /></span>
+        <span class="cap">Auto <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+      </a></li>
+      <li><a class="cover" href="https://levzen.com/existencias/moto" target="_blank" rel="noopener" aria-label="Catálogo de Moto (se abre en otra pestaña)">
+        <span class="art"><img src="https://levzen.com/existencias/assets/portada-moto-mini.jpg" alt="" width="360" height="467" loading="eager" decoding="async" /></span>
+        <span class="cap">Moto <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+      </a></li>
+      <li><a class="cover" href="https://levzen.com/existencias/camion" target="_blank" rel="noopener" aria-label="Catálogo de Camión (se abre en otra pestaña)">
+        <span class="art"><img src="https://levzen.com/existencias/assets/portada-camion-mini.jpg" alt="" width="360" height="467" loading="eager" decoding="async" /></span>
+        <span class="cap">Camión <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
+      </a></li>
+    </ul>
+
     <!-- BOTÓN 2: VER CATÁLOGOS DE PRODUCTOS -->
-    <button class="btn" onclick="openSection('catalogos')" aria-expanded="false" aria-controls="catalogos">
-      <span class="ico" aria-hidden="true">
-        <!-- icon: catalog/book -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 004 22.5V4.5z"/>
-          <path d="M8 7h8M8 11h8M8 15h5"/>
-        </svg>
-      </span>
-      <span class="label">
-        Ver catálogos de productos
-        <small>Auto, moto y camión</small>
-      </span>
-      <span class="chev" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </span>
+    <button class="link-more" onclick="openSection('catalogos', this)" aria-expanded="false" aria-controls="catalogos">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 004 22.5V4.5z"/>
+        <path d="M8 7h8M8 11h8M8 15h5"/>
+      </svg>
+      <span class="lm-text">Ver catálogos de productos<small>Auto, moto y camión</small></span>
+      <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
     </button>
 
-    <!-- BOTÓN 3: REGISTRARME EN LA PÁGINA -->
-    <a class="btn whats"
-       href="https://wa.me/525565041906?text=Hola%20Luis%2C%20quiero%20registrarme%20en%20la%20p%C3%A1gina%20de%20Levzen%20y%20conocer%20los%20productos.%20%C2%BFMe%20podr%C3%ADas%20apoyar%3F"
-       target="_blank" rel="noopener">
-      <span class="ico" aria-hidden="true">
-        <!-- icon: user-plus -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <line x1="20" y1="8" x2="20" y2="14"/>
-          <line x1="23" y1="11" x2="17" y2="11"/>
-        </svg>
-      </span>
-      <span class="label">
-        Registrarme en la página
-        <small>Crea tu cuenta con apoyo de un vendedor</small>
-      </span>
-      <span class="chev" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </span>
-    </a>
+    <!-- ============= MÁS OPCIONES ============= -->
+    <div class="sec-head"><h2>Atención y visitas</h2></div>
 
-    <!-- BOTÓN 4: AGENDAR VISITA EN EL ALMACÉN -->
-    <!-- WAREHOUSE_ADDRESS: dirección física del almacén (sólo texto) -->
-    <a class="btn whats"
-       href="https://wa.me/525534536756?text=%C2%A1Hola!%20Me%20gustar%C3%ADa%20visitar%20y%20agendar%20una%20cita%20en%20su%20almac%C3%A9n%2C%20%C2%BFme%20podr%C3%ADa%20apoyar%20con%20m%C3%A1s%20informaci%C3%B3n%3F"
-       target="_blank" rel="noopener">
-      <span class="ico" aria-hidden="true">
-        <!-- icon: calendar / pin -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="5" width="18" height="16" rx="2.5"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-          <line x1="8" y1="3" x2="8" y2="7"/>
-          <line x1="16" y1="3" x2="16" y2="7"/>
-          <circle cx="12" cy="15" r="1.6" fill="currentColor"/>
-        </svg>
-      </span>
-      <span class="label">
-        Quiero agendar una visita en el almacén
-        <small>Prol. Quintana Roo Mz. 4 1094-A, San Isidro Miranda, Querétaro</small>
-      </span>
-      <span class="chev" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </span>
-    </a>
+    <div class="stack">
+      <!-- BOTÓN 3: REGISTRARME EN LA PÁGINA -->
+      <a class="btn whats"
+         href="https://wa.me/525565041906?text=Hola%20Luis%2C%20quiero%20registrarme%20en%20la%20p%C3%A1gina%20de%20Levzen%20y%20conocer%20los%20productos.%20%C2%BFMe%20podr%C3%ADas%20apoyar%3F"
+         target="_blank" rel="noopener">
+        <span class="ico" aria-hidden="true">
+          <!-- icon: user-plus -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+        </span>
+        <span class="label">
+          Registrarme en la página
+          <small>Crea tu cuenta con apoyo de un vendedor</small>
+        </span>
+        <span class="chev" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </a>
 
-    <!-- BOTÓN 5: REFERENCIAS -->
-    <button class="btn" onclick="openSection('refs')" aria-expanded="false" aria-controls="refs">
-      <span class="ico" aria-hidden="true">
-        <!-- icon: stars -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/>
-        </svg>
-      </span>
-      <span class="label">
-        Referencias de clientes
-        <small>Reseñas reales en Google y Facebook</small>
-      </span>
-      <span class="chev" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </span>
-    </button>
+      <!-- BOTÓN 4: AGENDAR VISITA EN EL ALMACÉN -->
+      <!-- WAREHOUSE_ADDRESS: dirección física del almacén (sólo texto) -->
+      <a class="btn whats"
+         href="https://wa.me/525534536756?text=%C2%A1Hola!%20Me%20gustar%C3%ADa%20visitar%20y%20agendar%20una%20cita%20en%20su%20almac%C3%A9n%2C%20%C2%BFme%20podr%C3%ADa%20apoyar%20con%20m%C3%A1s%20informaci%C3%B3n%3F"
+         target="_blank" rel="noopener">
+        <span class="ico" aria-hidden="true">
+          <!-- icon: calendar / pin -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="16" rx="2.5"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+            <line x1="8" y1="3" x2="8" y2="7"/>
+            <line x1="16" y1="3" x2="16" y2="7"/>
+            <circle cx="12" cy="15" r="1.6" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="label">
+          Quiero agendar una visita en el almacén
+          <small>Prol. Quintana Roo Mz. 4 1094-A, San Isidro Miranda, Querétaro</small>
+        </span>
+        <span class="chev" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </a>
+
+      <!-- BOTÓN 5: REFERENCIAS -->
+      <button class="btn" onclick="openSection('refs', this)" aria-expanded="false" aria-controls="refs">
+        <span class="ico" aria-hidden="true">
+          <!-- icon: stars -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/>
+          </svg>
+        </span>
+        <span class="label">
+          Referencias de clientes
+          <small>Reseñas reales en Google y Facebook</small>
+        </span>
+        <span class="chev" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </button>
+    </div>
 
     <!-- ============= INFO: SOPORTE 24/7 + ALMACÉN ============= -->
-    <section class="info-stack">
+    <div class="sec-head"><h2>Contacto</h2></div>
 
-      <!-- Soporte 24/7 (sólo texto, no es botón) -->
-      <div class="info-card">
+    <div class="info-stack">
+
+      <!-- Soporte 24/7 (toda la tarjeta llama al número; no abre WhatsApp) -->
+      <div class="info-card call">
         <span class="info-ico" aria-hidden="true">
           <!-- icon: celular -->
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -699,9 +1046,9 @@
           </svg>
         </span>
         <div class="info-text">
-          <div class="info-eyebrow">Soporte y atención · 24/7</div>
+          <div class="info-eyebrow">Soporte y atención · 24/7<span class="badge-live" aria-hidden="true"></span></div>
           <!-- PAULO_PHONE: número para llamadas (no abre WhatsApp) -->
-          <a class="info-value" href="tel:+525534536756">55 3453 6756</a>
+          <a class="info-value" href="tel:+525534536756" aria-label="Llamar al 55 3453 6756">55 3453 6756</a>
         </div>
       </div>
 
@@ -727,11 +1074,11 @@
         </span>
       </a>
 
-    </section>
+    </div>
 
     <!-- ============= TAGLINE ============= -->
     <p class="tagline">
-      <span>“Productos que sí se mueven en tu negocio.”</span><br/>
+      <span>“Productos que sí se mueven en tu negocio.”</span>
       Surte mejor, vende más y compra al mayoreo.<br/>
       Un solo proveedor para auto, moto y camión.
     </p>
@@ -739,8 +1086,8 @@
   </section>
 
   <!-- ============= PANEL: MAYOREO ============= -->
-  <section id="mayoreo" class="panel hidden" aria-hidden="true">
-    <h2>Mayoreo LEVZEN</h2>
+  <section id="mayoreo" class="panel hidden" aria-labelledby="mayoreo-title">
+    <h2 id="mayoreo-title" tabindex="-1">Mayoreo LEVZEN</h2>
     <p class="lede">Más variedad para tu taller, refaccionaria o negocio automotriz.</p>
 
     <!-- Stats / highlights -->
@@ -757,23 +1104,23 @@
 
     <ul class="features">
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
         <div><b>Sin mínimo de compra</b><br/><span>después de tu primera orden inicial.</span></div>
       </li>
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
         <div><b>Auto, moto y camión</b><br/><span>en un solo proveedor confiable.</span></div>
       </li>
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
         <div><b>Precios de mayoreo</b><br/><span>para negocios, talleres, refaccionarias y revendedores.</span></div>
       </li>
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
         <div><b>Stock disponible</b><br/><span>y atención personalizada para tu negocio.</span></div>
       </li>
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
         <div><b>Envíos a todo México</b><br/><span>desde nuestro almacén directo a tu negocio.</span></div>
       </li>
     </ul>
@@ -792,14 +1139,14 @@
     </a>
 
     <button class="back" onclick="closeSection()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Regresar
     </button>
   </section>
 
   <!-- ============= PANEL: CATÁLOGOS ============= -->
-  <section id="catalogos" class="panel hidden" aria-hidden="true">
-    <h2>Catálogos de productos</h2>
+  <section id="catalogos" class="panel hidden" aria-labelledby="catalogos-title">
+    <h2 id="catalogos-title" tabindex="-1">Catálogos de productos</h2>
     <p class="lede">Elige una categoría y ve el catálogo de mayoreo con las existencias al momento.</p>
 
     <div class="cat-grid">
@@ -808,17 +1155,20 @@
       <a class="cat-btn"
          href="https://levzen.com/existencias/auto"
          target="_blank" rel="noopener">
-        <span class="brand" aria-hidden="true">
-          <!-- icon: car -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 16H9m10 0h3v-3.15a1 1 0 00-.84-.99L16 11l-2.7-3.6a1 1 0 00-.8-.4H5.24a2 2 0 00-1.8 1.1l-.8 1.63A6 6 0 002 12.42V16h2"/>
-            <circle cx="6.5" cy="16.5" r="2.5"/>
-            <circle cx="16.5" cy="16.5" r="2.5"/>
-          </svg>
-        </span>
-        <span>Catálogo de Auto</span>
-        <span class="arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <span class="thumb"><img src="https://levzen.com/existencias/assets/portada-auto-mini.jpg" alt="" width="360" height="467" loading="lazy" decoding="async" /></span>
+        <span class="body">
+          <span class="kicker">
+            <!-- icon: car -->
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 16H9m10 0h3v-3.15a1 1 0 00-.84-.99L16 11l-2.7-3.6a1 1 0 00-.8-.4H5.24a2 2 0 00-1.8 1.1l-.8 1.63A6 6 0 002 12.42V16h2"/>
+              <circle cx="6.5" cy="16.5" r="2.5"/>
+              <circle cx="16.5" cy="16.5" r="2.5"/>
+            </svg>
+            Auto
+          </span>
+          <span class="name">Catálogo de Auto</span>
+          <span class="desc">Accesorios para auto con existencias al momento.</span>
+          <span class="go">Ver catálogo <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
         </span>
       </a>
 
@@ -826,19 +1176,22 @@
       <a class="cat-btn"
          href="https://levzen.com/existencias/moto"
          target="_blank" rel="noopener">
-        <span class="brand" aria-hidden="true">
-          <!-- icon: motorcycle -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="5.5" cy="17.5" r="3.5"/>
-            <circle cx="18.5" cy="17.5" r="3.5"/>
-            <path d="M15 6h3l2 7"/>
-            <path d="M15 6l-3 8h-6"/>
-            <path d="M5 14h6"/>
-          </svg>
-        </span>
-        <span>Catálogo de Moto</span>
-        <span class="arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <span class="thumb"><img src="https://levzen.com/existencias/assets/portada-moto-mini.jpg" alt="" width="360" height="467" loading="lazy" decoding="async" /></span>
+        <span class="body">
+          <span class="kicker">
+            <!-- icon: motorcycle -->
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="5.5" cy="17.5" r="3.5"/>
+              <circle cx="18.5" cy="17.5" r="3.5"/>
+              <path d="M15 6h3l2 7"/>
+              <path d="M15 6l-3 8h-6"/>
+              <path d="M5 14h6"/>
+            </svg>
+            Moto
+          </span>
+          <span class="name">Catálogo de Moto</span>
+          <span class="desc">Accesorios para moto con existencias al momento.</span>
+          <span class="go">Ver catálogo <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
         </span>
       </a>
 
@@ -846,32 +1199,35 @@
       <a class="cat-btn"
          href="https://levzen.com/existencias/camion"
          target="_blank" rel="noopener">
-        <span class="brand" aria-hidden="true">
-          <!-- icon: truck -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 17h4V5H2v12h3"/>
-            <path d="M20 17h2v-3.34a4 4 0 00-1.17-2.83L19 9h-5v8h1"/>
-            <circle cx="7.5" cy="17.5" r="2.5"/>
-            <circle cx="17.5" cy="17.5" r="2.5"/>
-          </svg>
-        </span>
-        <span>Catálogo de Camión</span>
-        <span class="arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <span class="thumb"><img src="https://levzen.com/existencias/assets/portada-camion-mini.jpg" alt="" width="360" height="467" loading="lazy" decoding="async" /></span>
+        <span class="body">
+          <span class="kicker">
+            <!-- icon: truck -->
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 17h4V5H2v12h3"/>
+              <path d="M20 17h2v-3.34a4 4 0 00-1.17-2.83L19 9h-5v8h1"/>
+              <circle cx="7.5" cy="17.5" r="2.5"/>
+              <circle cx="17.5" cy="17.5" r="2.5"/>
+            </svg>
+            Camión
+          </span>
+          <span class="name">Catálogo de Camión</span>
+          <span class="desc">Accesorios para camión con existencias al momento.</span>
+          <span class="go">Ver catálogo <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
         </span>
       </a>
 
     </div>
 
     <button class="back" onclick="closeSection()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Regresar
     </button>
   </section>
 
   <!-- ============= PANEL: REFERENCIAS ============= -->
-  <section id="refs" class="panel hidden" aria-hidden="true">
-    <h2>Referencias de clientes</h2>
+  <section id="refs" class="panel hidden" aria-labelledby="refs-title">
+    <h2 id="refs-title" tabindex="-1">Referencias de clientes</h2>
     <p class="lede">Conoce la experiencia de negocios que ya compran en LEVZEN y surten productos de alta rotación.</p>
 
     <div class="ref-grid">
@@ -905,7 +1261,7 @@
     </div>
 
     <button class="back" onclick="closeSection()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Regresar
     </button>
   </section>
@@ -914,18 +1270,21 @@
   <div class="social-section reveal d6" id="finalSocial">
     <div class="label">Conecta con nosotros</div>
     <div class="social">
+      <!-- FACEBOOK_URL -->
       <a href="https://www.facebook.com/levzen.mx/" target="_blank" rel="noopener" aria-label="Facebook">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.6V4.2c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.6H7.6V14h2.7v8h3.2z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.6V4.2c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.6H7.6V14h2.7v8h3.2z"/></svg>
       </a>
+      <!-- INSTAGRAM_URL -->
       <a href="https://www.instagram.com/levzenmx/" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="5"/>
           <circle cx="12" cy="12" r="4"/>
           <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
         </svg>
       </a>
+      <!-- WHATSAPP_NUMBER -->
       <a class="wa" href="https://wa.me/525565041906" target="_blank" rel="noopener" aria-label="WhatsApp">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.9A10 10 0 003.7 16.2L2 22l5.9-1.6A10 10 0 1020 3.9zM12 20.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3.5.9.9-3.4-.2-.3a8.2 8.2 0 1115.5-3.7c0 4.5-3.7 8.1-8.2 8.1zm4.7-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.2-.8-.7-1.3-1.6-1.5-1.8-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5l.2-.3a.6.6 0 000-.5c-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2.1 3.2 5 4.4.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.9A10 10 0 003.7 16.2L2 22l5.9-1.6A10 10 0 1020 3.9zM12 20.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3.5.9.9-3.4-.2-.3a8.2 8.2 0 1115.5-3.7c0 4.5-3.7 8.1-8.2 8.1zm4.7-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.2-.8-.7-1.3-1.6-1.5-1.8-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5l.2-.3a.6.6 0 000-.5c-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2.1 3.2 5 4.4.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/></svg>
       </a>
     </div>
   </div>
@@ -947,8 +1306,15 @@
   const mainButtons   = document.getElementById('mainButtons');
   const finalSocial   = document.getElementById('finalSocial');
   const panels        = ['mayoreo','catalogos','refs'];
+  const reduceMotion  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lastTrigger     = null;
 
-  function openSection(id){
+  function setExpanded(id, value){
+    document.querySelectorAll('[aria-controls="'+id+'"]').forEach(b=>b.setAttribute('aria-expanded', value));
+  }
+
+  function openSection(id, trigger){
+    lastTrigger = trigger || null;
     /* Oculta todos los demás paneles + bloque de botones principales */
     mainButtons.classList.add('hidden');
     finalSocial.classList.add('hidden');
@@ -956,29 +1322,37 @@
       const el = document.getElementById(p);
       if(p === id){
         el.classList.remove('hidden');
-        el.setAttribute('aria-hidden','false');
+        setExpanded(p, 'true');
         /* Fuerza el reinicio de la animación */
         el.style.animation = 'none';
         void el.offsetWidth;
         el.style.animation = '';
+        /* Lleva el foco al título del panel (lectores de pantalla y teclado) */
+        const h = el.querySelector('h2');
+        if(h) h.focus({ preventScroll: true });
       } else {
         el.classList.add('hidden');
-        el.setAttribute('aria-hidden','true');
+        setExpanded(p, 'false');
       }
     });
     /* Scroll suave al inicio */
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
   }
 
   function closeSection(){
     panels.forEach(p=>{
-      const el = document.getElementById(p);
-      el.classList.add('hidden');
-      el.setAttribute('aria-hidden','true');
+      document.getElementById(p).classList.add('hidden');
+      setExpanded(p, 'false');
     });
     mainButtons.classList.remove('hidden');
     finalSocial.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if(lastTrigger){
+      lastTrigger.focus({ preventScroll: true });
+      lastTrigger.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
+      lastTrigger = null;
+    } else {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
   }
 
   /* Cerrar con tecla ESC */
