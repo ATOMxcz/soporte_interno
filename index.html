@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
+<script>if(location.protocol==='http:'&&location.hostname==='informacion.levzen.com')location.replace('https:'+location.href.slice(5));</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
 <meta name="theme-color" content="#000000" />
 <meta name="color-scheme" content="light" />
@@ -13,16 +14,18 @@
      ------------------------------------------------------------
      CÓMO EDITAR (zonas marcadas con comentarios):
        · LOGO_SRC ............ Cambiar imagen del logo (base64 o URL)
-       · WHATSAPP_NUMBER ..... Teléfono de Rocío (sin "+", sin espacios)
+       · WHATSAPP_NUMBER ..... Teléfono de Rocío (sin "+", sin espacios); también está en auto/, moto/ y camion/; el de dentro del catálogo sale de CATALOG_WEB_WHATSAPP, en el servidor
        · GOOGLE_REVIEWS_URL .. Link a reseñas de Google
        · FACEBOOK_REVIEWS_URL  Link a reseñas / página de Facebook
        · FACEBOOK_URL ........ Página oficial de Facebook
        · INSTAGRAM_URL ....... Perfil oficial de Instagram
        · CATALOG_COVERS ...... Portadas de los catálogos (levzen.com/existencias/assets)
+       · CATÁLOGOS ........... /auto/, /moto/ y /camion/ (catalogo.js los trae de levzen.com)
    ============================================================ -->
 
 <!-- Tipografía de levzen.com: Archivo (títulos, extranegrita, eje ancho 125 %)
      + Poppins (texto). Google Fonts, 1 sola petición. -->
+<link rel="preconnect" href="https://levzen.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -939,15 +942,15 @@
 
     <!-- CATALOG_COVERS: cada portada abre el catálogo de su categoría -->
     <ul class="covers" aria-labelledby="cat-home-title">
-      <li><a class="cover" href="https://levzen.com/existencias/auto" target="_blank" rel="noopener" aria-label="Catálogo de Auto (se abre en otra pestaña)">
+      <li><a class="cover" href="/auto/" aria-label="Catálogo de Auto">
         <span class="art"><img src="https://levzen.com/existencias/assets/portada-auto-mini.jpg" alt="" width="360" height="467" loading="eager" decoding="async" /></span>
         <span class="cap">Auto <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
       </a></li>
-      <li><a class="cover" href="https://levzen.com/existencias/moto" target="_blank" rel="noopener" aria-label="Catálogo de Moto (se abre en otra pestaña)">
+      <li><a class="cover" href="/moto/" aria-label="Catálogo de Moto">
         <span class="art"><img src="https://levzen.com/existencias/assets/portada-moto-mini.jpg" alt="" width="360" height="467" loading="eager" decoding="async" /></span>
         <span class="cap">Moto <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
       </a></li>
-      <li><a class="cover" href="https://levzen.com/existencias/camion" target="_blank" rel="noopener" aria-label="Catálogo de Camión (se abre en otra pestaña)">
+      <li><a class="cover" href="/camion/" aria-label="Catálogo de Camión">
         <span class="art"><img src="https://levzen.com/existencias/assets/portada-camion-mini.jpg" alt="" width="360" height="467" loading="eager" decoding="async" /></span>
         <span class="cap">Camión <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
       </a></li>
@@ -1153,8 +1156,7 @@
 
       <!-- AUTO -->
       <a class="cat-btn"
-         href="https://levzen.com/existencias/auto"
-         target="_blank" rel="noopener">
+         href="/auto/">
         <span class="thumb"><img src="https://levzen.com/existencias/assets/portada-auto-mini.jpg" alt="" width="360" height="467" loading="lazy" decoding="async" /></span>
         <span class="body">
           <span class="kicker">
@@ -1174,8 +1176,7 @@
 
       <!-- MOTO -->
       <a class="cat-btn"
-         href="https://levzen.com/existencias/moto"
-         target="_blank" rel="noopener">
+         href="/moto/">
         <span class="thumb"><img src="https://levzen.com/existencias/assets/portada-moto-mini.jpg" alt="" width="360" height="467" loading="lazy" decoding="async" /></span>
         <span class="body">
           <span class="kicker">
@@ -1197,8 +1198,7 @@
 
       <!-- CAMIÓN -->
       <a class="cat-btn"
-         href="https://levzen.com/existencias/camion"
-         target="_blank" rel="noopener">
+         href="/camion/">
         <span class="thumb"><img src="https://levzen.com/existencias/assets/portada-camion-mini.jpg" alt="" width="360" height="467" loading="lazy" decoding="async" /></span>
         <span class="body">
           <span class="kicker">
@@ -1362,6 +1362,26 @@
       if(anyOpen) closeSection();
     }
   });
+
+  /* Los catálogos se piden por adelantado, ya con la página quieta: al tocarlos abren al momento.
+     Con ahorro de datos no; entonces se pide solo el que se va a tocar. */
+  (function(){
+    if(!window.fetch) return;
+    const pedidos = {};
+    function pedir(v){
+      if(pedidos[v]) return; pedidos[v] = 1;
+      fetch('https://levzen.com/existencias/'+v, { credentials:'omit', priority:'low' })
+        .then(r=>r.ok && r.text()).catch(()=>{ pedidos[v] = 0; });
+    }
+    ['auto','moto','camion'].forEach(v=>{
+      document.querySelectorAll('a[href="/'+v+'/"]').forEach(a=>{
+        a.addEventListener('pointerdown', ()=>pedir(v), { passive:true });
+      });
+    });
+    const red = navigator.connection || {};
+    if(red.saveData || /2g/.test(red.effectiveType || '')) return;
+    window.addEventListener('load', ()=>setTimeout(()=>['auto','moto','camion'].forEach(pedir), 600));
+  })();
 </script>
 </body>
 </html>
